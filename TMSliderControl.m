@@ -103,15 +103,8 @@ static void *EnabledObservationContext = (void *)2092;
     [self unbind:@"state"];
     [self unbind:@"enabled"];
 
-    [_sliderWell release];
-    [_overlayMask release];
-    [_sliderHandle release];
-    [_sliderHandleImage release];
-    [_sliderHandleDownImage release];
 
-    [_purposeDescription release];
     
-    [super dealloc];
 }
 
 - (void)updateUI
@@ -378,7 +371,6 @@ static void *EnabledObservationContext = (void *)2092;
 			[mutableAttributes removeObject:NSAccessibilityChildrenAttribute];
 		
 		attributes = [mutableAttributes copy];
-		[mutableAttributes release];
 	}
 	return attributes;
 }
@@ -444,7 +436,6 @@ static void *EnabledObservationContext = (void *)2092;
 		if (![mutableActions containsObject:NSAccessibilityPressAction])
 			[mutableActions addObject:NSAccessibilityPressAction];
 		actions = [mutableActions copy];
-		[mutableActions release];
 	}
 	return actions;
 }
