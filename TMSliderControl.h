@@ -8,12 +8,12 @@
 
 #import <Cocoa/Cocoa.h>
 
-typedef enum 
+typedef NS_ENUM(unsigned int, TMSliderControlState) 
 {
     kTMSliderControlState_Inactive = 0,
     kTMSliderControlState_Active = 1
   
-}TMSliderControlState;
+};
 
 @class TMSliderControlHandle;
 
@@ -45,7 +45,7 @@ typedef enum
 - (IBAction)moveRight:(id)sender;
 
 - (void)layoutHandle;
-- (CGFloat)disabledOpacity;
+@property (nonatomic, readonly) CGFloat disabledOpacity;
 
 @property (nonatomic, strong) CALayer *sliderWell;
 @property (nonatomic, strong) CALayer *overlayMask;
@@ -65,6 +65,7 @@ typedef enum
 @property (nonatomic, copy) NSString *observedKeyPathForEnabled;
 
 @property (nonatomic, strong) NSString *purposeDescription;
+@property (nonatomic, strong) NSString *accessibilityText;
 
 @end
 
