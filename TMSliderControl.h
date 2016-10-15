@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-typedef NS_ENUM(unsigned int, TMSliderControlState) 
+typedef NS_ENUM(NSInteger, TMSliderControlState) 
 {
     kTMSliderControlState_Inactive = 0,
     kTMSliderControlState_Active = 1

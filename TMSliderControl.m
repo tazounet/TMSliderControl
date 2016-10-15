@@ -72,7 +72,7 @@ static void *EnabledObservationContext = (void *)2092;
         self.sliderHandleImage = [[self class] sliderHandleImage];
         self.sliderHandleDownImage = [[self class] sliderHandleDownImage];
         
-        [self setLayer:[CALayer layer]];
+        self.layer = [CALayer layer];
         [self setWantsLayer:YES];
         
         CALayer *mask = [CALayer layer];
@@ -115,7 +115,7 @@ static void *EnabledObservationContext = (void *)2092;
     sliderPosition.x = newXPosition;
     
     _sliderHandle.position = sliderPosition;
-    self.layer.opacity = (float)(self.enabled ? 1.0f : [self disabledOpacity]);
+    self.layer.opacity = (float)(self.enabled ? 1.0f : self.disabledOpacity);
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -142,29 +142,29 @@ static void *EnabledObservationContext = (void *)2092;
 
 - (BOOL)acceptsFirstResponder
 {
-    return [NSApp isFullKeyboardAccessEnabled];
+    return NSApp.fullKeyboardAccessEnabled;
 }
 
 - (BOOL)canBecomeKeyView
 {
-    return [NSApp isFullKeyboardAccessEnabled];
+    return NSApp.fullKeyboardAccessEnabled;
 }
 
 - (NSRect)focusRingMaskBounds
 {
-    return [self bounds];
+    return self.bounds;
 }
 
 - (void)drawFocusRingMask
 {
-    [self.layer renderInContext:[[NSGraphicsContext currentContext] graphicsPort]];
+    [self.layer renderInContext:[NSGraphicsContext currentContext].graphicsPort];
 }
 
 - (void)mouseDown:(NSEvent*)theEvent
 {
 	if(self.enabled)
     {
-        CGPoint mousePoint = NSPointToCGPoint([self convertPoint:[theEvent locationInWindow] fromView:nil]);
+        CGPoint mousePoint = NSPointToCGPoint([self convertPoint:theEvent.locationInWindow fromView:nil]);
         hasDragged = NO;
         // down on the position control rect
         if(CGRectContainsPoint(_sliderHandle.frame, mousePoint))
@@ -183,7 +183,7 @@ static void *EnabledObservationContext = (void *)2092;
 {
 	if(self.enabled)
 	{
-		NSPoint mousePoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+		NSPoint mousePoint = [self convertPoint:theEvent.locationInWindow fromView:nil];
 		hasDragged = YES;
 		
 		// center the rect around the mouse point
@@ -219,7 +219,7 @@ static void *EnabledObservationContext = (void *)2092;
         CGFloat minimumMovement = [self minimumMovement];
         if(hasDragged && _state != kTMSliderControlState_Inactive)
         {
-            if (_sliderHandle.frame.origin.x < [self bounds].size.width - _sliderHandle.frame.size.width - minimumMovement)
+            if (_sliderHandle.frame.origin.x < self.bounds.size.width - _sliderHandle.frame.size.width - minimumMovement)
             {
                 // moved it enough to set it
                 self.state = kTMSliderControlState_Inactive;
@@ -260,7 +260,7 @@ static void *EnabledObservationContext = (void *)2092;
 - (void)layoutHandle
 {
     handleControlRectOff = CGRectMake(-2,1, 44, 27);
-    handleControlRectOn = CGRectMake([self bounds].size.width - handleControlRectOff.size.width + 2,1, 44, 27);
+    handleControlRectOn = CGRectMake(self.bounds.size.width - handleControlRectOff.size.width + 2,1, 44, 27);
 }
 
 - (IBAction)moveLeft:(id)sender
@@ -280,7 +280,7 @@ static void *EnabledObservationContext = (void *)2092;
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-    [super drawRect:[self bounds]];
+    [super drawRect:self.bounds];
 }
 
 #pragma mark Bindings Support
@@ -291,15 +291,15 @@ static void *EnabledObservationContext = (void *)2092;
     {
         [observable addObserver:self forKeyPath:keyPath options:NSKeyValueObservingOptionNew context:StateObservationContext];
         
-        [self setObservedObjectForState:observable];
-        [self setObservedKeyPathForState:keyPath];
+        self.observedObjectForState = observable;
+        self.observedKeyPathForState = keyPath;
     }
     else if ([binding isEqualToString:@"enabled"])
     {
         [observable addObserver:self forKeyPath:keyPath options:NSKeyValueObservingOptionNew context:EnabledObservationContext];
         
-        [self setObservedObjectForEnabled:observable];
-        [self setObservedKeyPathForEnabled:keyPath];
+        self.observedObjectForEnabled = observable;
+        self.observedKeyPathForEnabled = keyPath;
     }
      
     [super bind:binding toObject:observable withKeyPath:keyPath options:options];
@@ -341,7 +341,7 @@ static void *EnabledObservationContext = (void *)2092;
 
 - (id)accessibilityValue
 {
-    return [NSNumber numberWithBool:self.state];
+    return @(self.state);
 }
 
 - (id)accessibilityLabel
